@@ -1,32 +1,29 @@
-const { default: makeWASocket, useMultiFileAuthState, DisconnectReason } = require("@whiskeysockets/baileys")
-const P = require("pino")
+const { default: makeWASocket, useMultiFileAuthState } = require("@whiskeysockets/baileys")
+const qrcode = require("qrcode-terminal")
 
 async function startBot() {
 
 const { state, saveCreds } = await useMultiFileAuthState("auth_info_baileys")
 
 const sock = makeWASocket({
-auth: state,
-printQRInTerminal: true,
-logger: P({ level: "silent" })
+auth: state
+})
+
+sock.ev.on("connection.update", (update) => {
+
+const { qr, connection } = update
+
+if(qr){
+qrcode.generate(qr, {small:true})
+}
+
+if(connection === "open"){
+console.log("✅ Aurora Bot conectado")
+}
+
 })
 
 sock.ev.on("creds.update", saveCreds)
-
-sock.ev.on("connection.update", (update) => {
-const { connection, lastDisconnect } = update
-
-if(connection === "close") {
-const shouldReconnect = lastDisconnect?.error?.output?.statusCode !== DisconnectReason.loggedOut
-if(shouldReconnect) {
-startBot()
-}
-}
-
-if(connection === "open") {
-console.log("✅ Aurora Bot conectado a WhatsApp")
-}
-})
 
 sock.ev.on("messages.upsert", async ({ messages }) => {
 
