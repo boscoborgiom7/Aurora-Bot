@@ -1,13 +1,12 @@
 const express = require("express");
 
 const app = express();
-
-app.get("/", (req, res) => {
-  res.send("Aurora Bot is running 🚀");
-});
-
 const PORT = process.env.PORT || 3000;
 
+app.get("/", (req, res) => {
+  res.send("Aurora WhatsApp Bot running 🤖");
+});
+
 app.listen(PORT, () => {
-  console.log("Aurora Bot running on port " + PORT);
+  console.log(`Server running on port ${PORT}`);
 });
