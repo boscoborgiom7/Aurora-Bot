@@ -20,21 +20,27 @@ sock.ev.on("connection.update", async (update) => {
 const { connection } = update
 
 if(connection === "open"){
-console.log("WhatsApp conectado 🚀")
+console.log("✅ WhatsApp conectado")
 }
 
 })
 
+/* GENERAR PAIRING CODE */
+
+setTimeout(async () => {
+
 if(!sock.authState.creds.registered){
 
-const phoneNumber = "5215568012991"
+const code = await sock.requestPairingCode("5215568012991")
 
-const code = await sock.requestPairingCode(phoneNumber)
-
-console.log("PAIRING CODE:")
+console.log("")
+console.log("🔑 PAIRING CODE:")
 console.log(code)
+console.log("")
 
 }
+
+}, 5000)
 
 sock.ev.on("messages.upsert", async ({ messages }) => {
 
