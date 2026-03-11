@@ -1,40 +1,40 @@
 const express = require("express")
 const { default: makeWASocket, useMultiFileAuthState } = require("@whiskeysockets/baileys")
-const qrcode = require("qrcode-terminal")
 
 const app = express()
 const PORT = process.env.PORT || 3000
 
-async function startBot() {
+async function startBot(){
 
 const { state, saveCreds } = await useMultiFileAuthState("auth")
 
 const sock = makeWASocket({
 auth: state,
-browser: ["Aurora Bot", "Chrome", "1.0"]
+browser: ["AuroraBot","Chrome","1.0"]
 })
 
 sock.ev.on("creds.update", saveCreds)
 
-sock.ev.on("connection.update", (update) => {
+sock.ev.on("connection.update", async (update) => {
 
-const { connection, qr } = update
-
-if(qr){
-console.log("SCAN QR CODE BELOW")
-qrcode.generate(qr, {small:true})
-}
+const { connection } = update
 
 if(connection === "open"){
 console.log("WhatsApp conectado 🚀")
 }
 
-if(connection === "close"){
-console.log("Reconectando...")
-startBot()
-}
-
 })
+
+if(!sock.authState.creds.registered){
+
+const phoneNumber = "5215568012991"
+
+const code = await sock.requestPairingCode(phoneNumber)
+
+console.log("PAIRING CODE:")
+console.log(code)
+
+}
 
 sock.ev.on("messages.upsert", async ({ messages }) => {
 
