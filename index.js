@@ -15,7 +15,7 @@ browser: ["AuroraBot","Chrome","1.0"]
 
 sock.ev.on("creds.update", saveCreds)
 
-sock.ev.on("connection.update", async (update) => {
+sock.ev.on("connection.update", (update) => {
 
 const { connection } = update
 
@@ -25,22 +25,26 @@ console.log("✅ WhatsApp conectado")
 
 })
 
-/* GENERAR PAIRING CODE */
+/* GENERAR CODIGO DE VINCULACION */
 
 setTimeout(async () => {
 
-if(!sock.authState.creds.registered){
+try{
 
 const code = await sock.requestPairingCode("5215568012991")
 
 console.log("")
-console.log("🔑 PAIRING CODE:")
+console.log("🔑 TU CODIGO DE VINCULACION:")
 console.log(code)
 console.log("")
 
+}catch(err){
+
+console.log("Error generando código")
+
 }
 
-}, 5000)
+},8000)
 
 sock.ev.on("messages.upsert", async ({ messages }) => {
 
